@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroSense API Documentation</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #111827;
+      --surface-2: #1a2332;
+      --border: #2a3548;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --get: #10b981;
+      --post: #3b82f6;
+      --patch: #f59e0b;
+      --delete: #ef4444;
+      --tag-bg: #1e293b;
+      --code-bg: #0f172a;
+      --success: #22c55e;
+      --warning: #eab308;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0 0.5rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
+
+    .logo h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo span {
+      font-size: 0.7rem;
+      color: var(--muted);
+      display: block;
+      font-weight: 400;
+    }
+
+    .nav-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .nav-section-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 0.4rem 0.5rem;
+      font-weight: 600;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s;
+    }
+
+    .nav-link:hover {
+      background: var(--surface-2);
+    }
+
+    .method-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      min-width: 42px;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+
+    .method-badge.get { background: rgba(16,185,129,0.2); color: var(--get); }
+    .method-badge.post { background: rgba(59,130,246,0.2); color: var(--post); }
+    .method-badge.patch { background: rgba(245,158,11,0.2); color: var(--patch); }
+
+    /* Main content */
+    .main {
+      padding: 2rem 2.5rem 4rem;
+      max-width: 960px;
+    }
+
+    .header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 640px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .meta-chip {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .meta-chip strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 2.75rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h3 {
+      font-size: 1.25rem;
+      font-weight: 650;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Endpoint card */
+    .endpoint {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1.1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .endpoint-header:hover {
+      background: var(--surface-2);
+    }
+
+    .endpoint-path {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .endpoint-path .param {
+      color: #a78bfa;
+    }
+
+    .role-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .role-tag.manager {
+      color: #fbbf24;
+      border-color: rgba(251,191,36,0.35);
+    }
+
+    .role-tag.public {
+      color: var(--success);
+      border-color: rgba(34,197,94,0.35);
+    }
+
+    .chevron {
+      color: var(--muted);
+      transition: transform 0.2s;
+      font-size: 0.85rem;
+    }
+
+    .endpoint.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .endpoint-body {
+      display: none;
+      padding: 0 1.1rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .endpoint.open .endpoint-body {
+      display: block;
+    }
+
+    .endpoint-body h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 1rem 0 0.5rem;
+    }
+
+    .endpoint-body p {
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.35rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.45rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: #93c5fd;
+    }
+
+    .required {
+      color: #f87171;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .optional {
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: #d1d5db;
+      margin-top: 0.35rem;
+    }
+
+    .status-codes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+
+    .status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+
+    .status.ok { color: var(--success); }
+    .status.created { color: #60a5fa; }
+    .status.accepted { color: #a78bfa; }
+    .status.err { color: #f87171; }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .main { padding: 1.25rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar navigation -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🌱</div>
+        <div>
+          <h1>AgroSense</h1>
+          <span>API Documentation</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Health</div>
+        <a class="nav-link" href="#health"><span class="method-badge get">GET</span> /api/health</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Authentication</div>
+        <a class="nav-link" href="#auth-login"><span class="method-badge post">POST</span> /api/auth/login</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Dashboard</div>
+        <a class="nav-link" href="#dashboard"><span class="method-badge get">GET</span> /api/dashboard</a>
+        <a class="nav-link" href="#dashboard-crop"><span class="method-badge get">GET</span> /api/dashboard/{cropId}</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Estates &amp; Crops</div>
+        <a class="nav-link" href="#estates-list"><span class="method-badge get">GET</span> /api/fincas</a>
+        <a class="nav-link" href="#estates-create"><span class="method-badge post">POST</span> /api/fincas</a>
+        <a class="nav-link" href="#crops-list"><span class="method-badge get">GET</span> /api/cultivos</a>
+        <a class="nav-link" href="#crops-create"><span class="method-badge post">POST</span> /api/cultivos</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Sensors</div>
+        <a class="nav-link" href="#readings-create"><span class="method-badge post">POST</span> /api/readings</a>
+        <a class="nav-link" href="#sensors-readings"><span class="method-badge get">GET</span> /api/sensors/{id}/readings</a>
+        <a class="nav-link" href="#crop-sensors"><span class="method-badge get">GET</span> /api/crops/{id}/sensors</a>
+        <a class="nav-link" href="#sensors-create"><span class="method-badge post">POST</span> /api/sensors</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Alerts</div>
+        <a class="nav-link" href="#alerts-list"><span class="method-badge get">GET</span> /api/alerts</a>
+        <a class="nav-link" href="#crop-alerts"><span class="method-badge get">GET</span> /api/crops/{id}/alerts</a>
+        <a class="nav-link" href="#alerts-ack"><span class="method-badge patch">PATCH</span> /api/alerts/{id}/acknowledge</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Irrigation</div>
+        <a class="nav-link" href="#irrigation-history"><span class="method-badge get">GET</span> /api/riego/cultivo/{id}</a>
+        <a class="nav-link" href="#irrigation-create"><span class="method-badge post">POST</span> /api/riego</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Predictions (AI)</div>
+        <a class="nav-link" href="#predictions-history"><span class="method-badge get">GET</span> /api/crops/{id}/predictions</a>
+        <a class="nav-link" href="#predictions-request"><span class="method-badge post">POST</span> /api/crops/{id}/predictions</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <header class="header">
+        <h2>AgroSense REST API</h2>
+        <p>
+          Backend API for the AgroSense agricultural monitoring platform.
+          Manage estates, crops, sensors, irrigation cycles, alerts and AI-powered irrigation predictions.
+        </p>
+        <div class="meta-row">
+          <span class="meta-chip"><strong>Base URL</strong> &nbsp;/api</span>
+          <span class="meta-chip"><strong>Auth</strong> &nbsp;JWT Bearer (after login)</span>
+          <span class="meta-chip"><strong>Roles</strong> &nbsp;ADMIN · FARMER · TECHNICIAN</span>
+          <span class="meta-chip"><strong>Format</strong> &nbsp;JSON</span>
+        </div>
+      </header>
+
+      <!-- Roles note -->
+      <section class="section">
+        <div class="section-header"><h3>Authorization</h3></div>
+        <p class="section-desc">
+          Most endpoints require authentication. Role checks are applied in addition to ownership:
+          every operation is limited to the authenticated user's own estates.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Permissions</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ADMIN</code> / <code>FARMER</code></td>
+              <td>Full access (Manager): create estates &amp; crops, irrigate, acknowledge alerts, request predictions</td>
+            </tr>
+            <tr>
+              <td><code>TECHNICIAN</code></td>
+              <td>Read data, record sensor readings, register sensors</td>
+            </tr>
+            <tr>
+              <td>Public</td>
+              <td>Health check and login only</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ========== HEALTH ========== -->
+      <section class="section" id="health-section">
+        <div class="section-header"><h3>Health</h3></div>
+        <p class="section-desc">Public liveness probe. Confirms the API process is up and serving requests.</p>
+
+        <div class="endpoint" id="health">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/health</span>
+            <span class="role-tag public">Public</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Returns the current health status of the service.</p>
+            <h4>Response</h4>
+            <pre>{
+  "status": "UP"
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== AUTH ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Authentication</h3></div>
+        <p class="section-desc">Obtain a JWT token to access protected endpoints.</p>
+
+        <div class="endpoint" id="auth-login">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/auth/login</span>
+            <span class="role-tag public">Public</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Authenticates a user with email and password. Rate-limited against brute-force attempts.</p>
+            <h4>Request body</h4>
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>email</code></td><td>string</td><td><span class="required">required</span></td><td>Valid email address</td></tr>
+                <tr><td><code>password</code></td><td>string</td><td><span class="required">required</span></td><td>User password (max 72 chars)</td></tr>
+              </tbody>
+            </table>
+            <pre>{
+  "email": "farmer@example.com",
+  "password": "securePassword"
+}</pre>
+            <h4>Response</h4>
+            <pre>{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "..."
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">401 Unauthorized</span>
+              <span class="status err">429 Too Many Requests</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== DASHBOARD ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Dashboard</h3></div>
+        <p class="section-desc">Aggregated overview of estates, crops, sensors and recent alerts.</p>
+
+        <div class="endpoint" id="dashboard">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/dashboard</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Returns the full dashboard for the authenticated user (all owned estates).</p>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">401 Unauthorized</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="dashboard-crop">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/dashboard/<span class="param">{cropId}</span></span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Returns a crop-scoped dashboard.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== ESTATES & CROPS ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Estates &amp; Crops</h3></div>
+        <p class="section-desc">Manage agricultural estates (fincas) and their active crops (cultivos).</p>
+
+        <div class="endpoint" id="estates-list">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/fincas</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Lists all estates owned by the authenticated user.</p>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="estates-create">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/fincas</span>
+            <span class="role-tag manager">MANAGER</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Creates a new estate. Latitude and longitude must be sent together or both omitted.</p>
+            <h4>Request body</h4>
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>name</code></td><td>string</td><td><span class="required">required</span></td><td>Estate name (max 255)</td></tr>
+                <tr><td><code>location</code></td><td>string</td><td><span class="required">required</span></td><td>Location description</td></tr>
+                <tr><td><code>areaHa</code></td><td>number</td><td><span class="required">required</span></td><td>Area in hectares (&gt; 0)</td></tr>
+                <tr><td><code>latitude</code></td><td>number</td><td><span class="optional">optional</span></td><td>−90 to 90</td></tr>
+                <tr><td><code>longitude</code></td><td>number</td><td><span class="optional">optional</span></td><td>−180 to 180</td></tr>
+              </tbody>
+            </table>
+            <pre>{
+  "name": "Finca El Sol",
+  "location": "Valle del Cauca, Colombia",
+  "areaHa": 12.5,
+  "latitude": 3.4516,
+  "longitude": -76.5320
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status created">201 Created</span>
+              <span class="status err">400 Bad Request</span>
+              <span class="status err">403 Forbidden</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="crops-list">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/cultivos</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Lists active crops. Optionally filter by estate.</p>
+            <h4>Query parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>estateId</code></td><td>integer</td><td><span class="optional">optional</span></td><td>Filter by estate ID</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="crops-create">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/cultivos</span>
+            <span class="role-tag manager">MANAGER</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Registers a new crop on an estate. Optimal ranges (humidity, temperature, pH) are optional; omit both ends of a range to use defaults.</p>
+            <h4>Request body</h4>
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>estateId</code></td><td>integer</td><td><span class="required">required</span></td><td>Parent estate ID</td></tr>
+                <tr><td><code>name</code></td><td>string</td><td><span class="required">required</span></td><td>Crop name</td></tr>
+                <tr><td><code>variety</code></td><td>string</td><td><span class="optional">optional</span></td><td>Variety name</td></tr>
+                <tr><td><code>sowingDate</code></td><td>date</td><td><span class="optional">optional</span></td><td>ISO date (YYYY-MM-DD)</td></tr>
+                <tr><td><code>humidityMin</code> / <code>humidityMax</code></td><td>number</td><td><span class="optional">optional</span></td><td>0–100</td></tr>
+                <tr><td><code>tempMin</code> / <code>tempMax</code></td><td>number</td><td><span class="optional">optional</span></td><td>−50 to 80 °C</td></tr>
+                <tr><td><code>phMin</code> / <code>phMax</code></td><td>number</td><td><span class="optional">optional</span></td><td>0–14</td></tr>
+              </tbody>
+            </table>
+            <pre>{
+  "estateId": 1,
+  "name": "Tomato",
+  "variety": "Cherry",
+  "sowingDate": "2026-03-15",
+  "humidityMin": 40,
+  "humidityMax": 70,
+  "tempMin": 18,
+  "tempMax": 28
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status created">201 Created</span>
+              <span class="status err">400 Bad Request</span>
+              <span class="status err">403 Forbidden</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== SENSORS ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Sensors</h3></div>
+        <p class="section-desc">Register sensors and record readings (soil moisture, temperature, pH, etc.).</p>
+
+        <div class="endpoint" id="readings-create">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/readings</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Records a new sensor reading. May trigger alerts when values fall outside crop thresholds.</p>
+            <h4>Request body</h4>
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>sensorCode</code></td><td>string</td><td><span class="required">required</span></td><td>Unique sensor code</td></tr>
+                <tr><td><code>value</code></td><td>number</td><td><span class="required">required</span></td><td>Measured value</td></tr>
+                <tr><td><code>unit</code></td><td>string</td><td><span class="optional">optional</span></td><td>Unit of measurement (max 20)</td></tr>
+              </tbody>
+            </table>
+            <pre>{
+  "sensorCode": "SOIL-MOIST-01",
+  "value": 42.5,
+  "unit": "%"
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status created">201 Created</span>
+              <span class="status err">400 Bad Request</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="sensors-readings">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/sensors/<span class="param">{sensorId}</span>/readings</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Returns the latest readings for a sensor.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>sensorId</code></td><td>integer</td><td><span class="required">required</span></td><td>Sensor identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Query parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>limit</code></td><td>integer</td><td>50</td><td>Max number of readings to return</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="crop-sensors">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/crops/<span class="param">{cropId}</span>/sensors</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Lists all sensors assigned to a crop.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="sensors-create">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/sensors</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Registers a new sensor on a crop.</p>
+            <h4>Request body</h4>
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Parent crop ID</td></tr>
+                <tr><td><code>sensorType</code></td><td>enum</td><td><span class="required">required</span></td><td>Sensor type (e.g. SOIL_MOISTURE, TEMPERATURE, PH)</td></tr>
+                <tr><td><code>sensorCode</code></td><td>string</td><td><span class="required">required</span></td><td>Unique hardware code</td></tr>
+                <tr><td><code>location</code></td><td>string</td><td><span class="optional">optional</span></td><td>Physical location description</td></tr>
+              </tbody>
+            </table>
+            <pre>{
+  "cropId": 3,
+  "sensorType": "SOIL_MOISTURE",
+  "sensorCode": "SOIL-MOIST-01",
+  "location": "North sector, 20 cm depth"
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status created">201 Created</span>
+              <span class="status err">400 Bad Request</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== ALERTS ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Alerts</h3></div>
+        <p class="section-desc">Open alerts generated when sensor readings fall outside crop thresholds.</p>
+
+        <div class="endpoint" id="alerts-list">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/alerts</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Lists open (unacknowledged) alerts for the authenticated user.</p>
+            <h4>Query parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>limit</code></td><td>integer</td><td>50</td><td>Max number of alerts</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="crop-alerts">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/crops/<span class="param">{cropId}</span>/alerts</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Lists open alerts for a specific crop.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Query parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>limit</code></td><td>integer</td><td>50</td><td>Max number of alerts</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="alerts-ack">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge patch">PATCH</span>
+            <span class="endpoint-path">/api/alerts/<span class="param">{alertId}</span>/acknowledge</span>
+            <span class="role-tag manager">MANAGER</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Acknowledges (closes) an open alert.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>alertId</code></td><td>integer</td><td><span class="required">required</span></td><td>Alert identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">403 Forbidden</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== IRRIGATION ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Irrigation</h3></div>
+        <p class="section-desc">Record and query irrigation cycles performed on crops.</p>
+
+        <div class="endpoint" id="irrigation-history">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/riego/cultivo/<span class="param">{cropId}</span></span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Returns the irrigation history for a crop.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Query parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>limit</code></td><td>integer</td><td>50</td><td>Max number of records</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="irrigation-create">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/riego</span>
+            <span class="role-tag manager">MANAGER</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Registers a completed irrigation cycle.</p>
+            <h4>Request body</h4>
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop that was irrigated</td></tr>
+                <tr><td><code>waterLiters</code></td><td>number</td><td><span class="required">required</span></td><td>Water volume in liters (&gt; 0)</td></tr>
+                <tr><td><code>durationMinutes</code></td><td>integer</td><td><span class="required">required</span></td><td>Duration in minutes (1–1440)</td></tr>
+                <tr><td><code>reason</code></td><td>string</td><td><span class="required">required</span></td><td>Reason for irrigation</td></tr>
+              </tbody>
+            </table>
+            <pre>{
+  "cropId": 3,
+  "waterLiters": 250.0,
+  "durationMinutes": 45,
+  "reason": "Low soil moisture detected"
+}</pre>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status created">201 Created</span>
+              <span class="status err">400 Bad Request</span>
+              <span class="status err">403 Forbidden</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PREDICTIONS ========== -->
+      <section class="section">
+        <div class="section-header"><h3>Predictions (AI)</h3></div>
+        <p class="section-desc">
+          AI-powered irrigation recommendations. A prediction request is accepted asynchronously;
+          the result appears in the history once the AI service responds.
+        </p>
+
+        <div class="endpoint" id="predictions-history">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/crops/<span class="param">{cropId}</span>/predictions</span>
+            <span class="role-tag">ANY</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>Returns the prediction history for a crop.</p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Query parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>limit</code></td><td>integer</td><td>20</td><td>Max number of predictions</td></tr>
+              </tbody>
+            </table>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status ok">200 OK</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint" id="predictions-request">
+          <div class="endpoint-header" onclick="toggle(this)">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/crops/<span class="param">{cropId}</span>/predictions</span>
+            <span class="role-tag manager">MANAGER</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="endpoint-body">
+            <h4>Description</h4>
+            <p>
+              Starts an irrigation prediction using the crop's latest sensor readings.
+              Ownership is verified on the request thread (foreign crops return 404).
+              The response is empty; poll the history endpoint for the result.
+            </p>
+            <h4>Path parameters</h4>
+            <table>
+              <thead><tr><th>Name</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>cropId</code></td><td>integer</td><td><span class="required">required</span></td><td>Crop identifier</td></tr>
+              </tbody>
+            </table>
+            <h4>Request body</h4>
+            <p>None — conditions are derived from the latest readings.</p>
+            <h4>Status codes</h4>
+            <div class="status-codes">
+              <span class="status accepted">202 Accepted</span>
+              <span class="status err">403 Forbidden</span>
+              <span class="status err">404 Not Found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        AgroSense API Documentation · Generated from backend controllers · All content in English
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    function toggle(el) {
+      el.parentElement.classList.toggle('open');
+    }
+    // Open first endpoint of each section by default for better first look
+    document.querySelectorAll('.section').forEach(s => {
+      const first = s.querySelector('.endpoint');
+      if (first) first.classList.add('open');
+    });
+  </script>
+</body>
+</html>
